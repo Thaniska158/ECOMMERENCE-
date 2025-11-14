@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AttireMart — Stylish e‑Commerce UI</title>
+  <style>
+    :root{
+      --bg:#0f1724; /* deep night */
+      --card:#0b1220;
+      --muted:#94a3b8;
+      --accent:#ff7a59; /* coral */
+      --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(255,255,255,0.02);
+      --radius:16px;
+      --max-width:1200px;
+      --shadow: 0 6px 18px rgba(2,6,23,0.6);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: linear-gradient(180deg,#071022 0%, #081225 50%, #071428 100%);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .container{
+      max-width:var(--max-width);
+      margin:32px auto;
+      padding:24px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:20px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px;
+    }
+    .logo{
+      width:48px;height:48px;background:linear-gradient(135deg,#ffb199,#ff7a59);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow: var(--shadow);
+    }
+    .logo span{color:#081225;font-weight:800}
+
+    .search{
+      flex:1; max-width:640px; margin:0 18px; position:relative;
+    }
+    .search input{
+      width:100%; padding:14px 18px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);
+      background:var(--glass); color:inherit; outline:none; font-size:15px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    .actions{display:flex;gap:12px;align-items:center}
+    .icon-btn{background:var(--glass);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+
+    main{display:grid;grid-template-columns:260px 1fr;gap:20px}
+
+    /* sidebar */
+    .sidebar{background:linear-gradient(180deg,var(--glass),var(--glass-2));padding:16px;border-radius:14px;border:1px solid rgba(255,255,255,0.03)}
+    .sidebar h4{margin:0 0 12px 0;color:var(--muted);font-size:13px}
+    .category{display:flex;flex-direction:column;gap:8px}
+    .chip{padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+    .chip.active{background:linear-gradient(90deg, rgba(255,122,89,0.16), rgba(255,186,153,0.06));border-color:rgba(255,122,89,0.18)}
+
+    /* product grid */
+    .products{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;transition:transform .22s ease, box-shadow .22s ease;
+    }
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.7)}
+    .thumb{height:180px;border-radius:10px;background-size:cover;background-position:center;border:1px solid rgba(255,255,255,0.03)}
+    .tag{font-size:12px;color:var(--muted)}
+    .title{font-weight:700}
+    .price-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .price{font-weight:800;font-size:18px}
+    .star{font-size:13px;color:#ffd27a}
+
+    .card-footer{display:flex;gap:8px}
+    .btn{flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(90deg,var(--accent),#ffb199);color:#081225;font-weight:700}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+    /* cart drawer */
+    .cart-drawer{position:fixed;right:24px;top:24px;width:360px;max-width:calc(100% - 48px);background:linear-gradient(180deg,#081224,#07101a);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,0.04);transform:translateY(-20px) scale(.98);opacity:0;pointer-events:none;transition:all .22s ease;box-shadow:0 30px 80px rgba(2,6,23,0.6)}
+    .cart-drawer.open{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
+    .cart-item{display:flex;gap:12px;align-items:center;padding:8px;border-radius:10px}
+    .cart-item img{width:64px;height:64px;border-radius:8px;object-fit:cover}
+    .qty{display:flex;gap:6px;align-items:center}
+    .qty button{padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted)}
+
+    footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* responsive */
+    @media (max-width:920px){main{grid-template-columns:1fr} .sidebar{order:2} .cart-drawer{right:12px;left:12px;width:auto}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo"><span>AM</span></div>
+        <div>
+          <div style="font-size:14px;color:var(--muted)">AttireMart</div>
+          <div style="font-size:11px;color:var(--muted)">Fashion & more</div>
+        </div>
+      </div>
+
+      <div class="search">
+        <input id="search" placeholder="Search for jackets, sneakers, kurta sets..." />
+      </div>
+
+      <div class="actions">
+        <button class="icon-btn" id="wishlistBtn" title="Wishlist">♡</button>
+        <button class="icon-btn" id="cartBtn" title="Open cart">🛒 <span id="cartCount" style="margin-left:8px;font-weight:700">0</span></button>
+      </div>
+    </header>
+
+    <main>
+      <aside class="sidebar">
+        <h4>Categories</h4>
+        <div class="category" id="categories">
+          <div class="chip active" data-cat="all">All</div>
+          <div class="chip" data-cat="mens">Men's</div>
+          <div class="chip" data-cat="womens">Women's</div>
+          <div class="chip" data-cat="kids">Kids</div>
+          <div class="chip" data-cat="footwear">Footwear</div>
+          <div class="chip" data-cat="accessories">Accessories</div>
+        </div>
+
+        <h4 style="margin-top:16px">Sort</h4>
+        <select id="sort" style="width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03)">
+          <option value="popular">Most Popular</option>
+          <option value="new">New Arrivals</option>
+          <option value="low">Price: Low to High</option>
+          <option value="high">Price: High to Low</option>
+        </select>
+      </aside>
+
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:12px">
+          <div>
+            <h2 style="margin:0">Trending Outfits</h2>
+            <div style="color:var(--muted);font-size:13px">Curated picks — fresh every week</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="chip" id="viewGrid">Grid</button>
+            <button class="chip" id="viewList">List</button>
+          </div>
+        </div>
+
+        <div class="products" id="products"></div>
+
+        <footer>Built with ❤️ — sample front-end only. Replace images and integrate a backend to make it production-ready.</footer>
+      </section>
+    </main>
+
+    <!-- cart drawer -->
+    <aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <strong>Your Cart</strong>
+        <button id="closeCart" class="icon-btn">✕</button>
+      </div>
+      <div id="cartItems" style="display:flex;flex-direction:column;gap:8px;max-height:360px;overflow:auto;padding-right:6px"></div>
+      <div style="border-top:1px solid rgba(255,255,255,0.03);padding-top:10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:700">Total</div>
+        <div id="cartTotal" style="font-size:18px;font-weight:800">₹0</div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn" id="checkout">Checkout</button>
+        <button class="btn secondary" id="clearCart">Clear</button>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // Sample product data (in a real app you'd fetch this)
+    const productsData = [
+      {id:1,title:'Men\'s Bomber Jacket',cat:'mens',price:2499,rate:4.6,img:'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=60'},
+      {id:2,title:'Women\'s Cotton Kurta Set',cat:'womens',price:1599,rate:4.8,img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=60'},
+      {id:3,title:'Classic White Sneakers',cat:'footwear',price:3199,rate:4.4,img:'https://images.unsplash.com/photo-1526178619530-0c0b1e9f0bdb?auto=format&fit=crop&w=800&q=60'},
+      {id:4,title:'Kids Cartoon Hoodie',cat:'kids',price:899,rate:4.2,img:'https://images.unsplash.com/photo-1602810312397-43f64d9f3b5d?auto=format&fit=crop&w=800&q=60'},
+      {id:5,title:'Leather Belt & Wallet Combo',cat:'accessories',price:1299,rate:4.7,img:'https://images.unsplash.com/photo-1575320181286-1fcbf1a1a0d7?auto=format&fit=crop&w=800&q=60'},
+      {id:6,title:'Women\'s Evening Gown',cat:'womens',price:4999,rate:4.9,img:'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=800&q=60'},
+      {id:7,title:'Men\'s Casual Shirt',cat:'mens',price:1299,rate:4.3,img:'https://images.unsplash.com/photo-1520975914533-3a1f15f5f561?auto=format&fit=crop&w=800&q=60'},
+      {id:8,title:'Running Shoes — Lightweight',cat:'footwear',price:3499,rate:4.5,img:'https://images.unsplash.com/photo-1552346154-0f3f6d6c7d3a?auto=format&fit=crop&w=800&q=60'}
+    ];
+
+    let cart = {};
+
+    // helpers
+    const fmt = n => '₹' + n.toLocaleString('en-IN');
+
+    // render products
+    const productsEl = document.getElementById('products');
+    function renderProducts(list){
+      productsEl.innerHTML = '';
+      list.forEach(p => {
+        const card = document.createElement('div'); card.className = 'card';
+        card.innerHTML = `
+          <div class="thumb" style="background-image: url('${p.img}')"></div>
+          <div class="tag">${p.cat.toUpperCase()}</div>
+          <div class="title">${p.title}</div>
+          <div class="price-row">
+            <div class="price">${fmt(p.price)}</div>
+            <div class="star">★ ${p.rate}</div>
+          </div>
+          <div class="card-footer">
+            <button class="btn" data-id="${p.id}">Add to cart</button>
+            <button class="btn secondary" data-id="${p.id}" onclick="quickView(${p.id})">Quick View</button>
+          </div>
+        `;
+        productsEl.appendChild(card);
+      });
+    }
+
+    // initial render
+    renderProducts(productsData);
+
+    // search
+    document.getElementById('search').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      const filtered = productsData.filter(p => p.title.toLowerCase().includes(q) || p.cat.includes(q));
+      renderProducts(filtered);
+    });
+
+    // category filters
+    document.getElementById('categories').addEventListener('click', e => {
+      const chip = e.target.closest('.chip'); if(!chip) return;
+      document.querySelectorAll('#categories .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const cat = chip.dataset.cat;
+      const list = cat === 'all' ? productsData : productsData.filter(p => p.cat === cat);
+      renderProducts(list);
+    });
+
+    // sorting
+    document.getElementById('sort').addEventListener('change', e => {
+      const s = e.target.value; let arr = [...productsData];
+      if(s === 'low') arr.sort((a,b)=>a.price-b.price);
+      if(s === 'high') arr.sort((a,b)=>b.price-a.price);
+      if(s === 'new') arr = arr.reverse();
+      renderProducts(arr);
+    });
+
+    // add to cart (event delegation)
+    productsEl.addEventListener('click', e => {
+      const btn = e.target.closest('button[data-id]'); if(!btn) return;
+      const id = Number(btn.dataset.id);
+      addToCart(id);
+    });
+
+    // cart UI
+    const cartBtn = document.getElementById('cartBtn');
+    const cartDrawer = document.getElementById('cartDrawer');
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartCount = document.getElementById('cartCount');
+    const cartTotal = document.getElementById('cartTotal');
+
+    function addToCart(id){
+      cart[id] = (cart[id] || 0) + 1;
+      updateCartUI();
+      openCart();
+    }
+    function removeFromCart(id){
+      delete cart[id]; updateCartUI();
+    }
+    function changeQty(id, delta){
+      if(!cart[id]) return; cart[id]+=delta; if(cart[id] <= 0) removeFromCart(id); updateCartUI();
+    }
+
+    function updateCartUI(){
+      cartItemsEl.innerHTML = '';
+      const ids = Object.keys(cart).map(Number);
+      let total = 0; let count = 0;
+      if(ids.length === 0){cartItemsEl.innerHTML = '<div style="color:var(--muted);padding:12px">Your cart is empty</div>'}
+      ids.forEach(id => {
+        const p = productsData.find(x=>x.id===id); const qty = cart[id];
+        total += p.price * qty; count += qty;
+        const item = document.createElement('div'); item.className='cart-item';
+        item.innerHTML = `
+          <img src="${p.img}" alt="${p.title}" />
+          <div style="flex:1">
+            <div style="font-weight:700">${p.title}</div>
+            <div style="color:var(--muted);font-size:13px">${fmt(p.price)} × ${qty}</div>
+          </div>
+          <div class="qty">
+            <button onclick="changeQty(${id},-1)">−</button>
+            <div style="min-width:22px;text-align:center">${qty}</div>
+            <button onclick="changeQty(${id},1)">+</button>
+            <button style="margin-left:8px" onclick="removeFromCart(${id})">🗑</button>
+          </div>
+        `;
+        cartItemsEl.appendChild(item);
+      });
+      cartCount.textContent = count;
+      cartTotal.textContent = fmt(total);
+    }
+
+    // cart open/close
+    function openCart(){cartDrawer.classList.add('open'); cartDrawer.setAttribute('aria-hidden','false')}
+    function closeCart(){cartDrawer.classList.remove('open'); cartDrawer.setAttribute('aria-hidden','true')}
+    cartBtn.addEventListener('click', openCart); document.getElementById('closeCart').addEventListener('click', closeCart);
+
+    // checkout & clear
+    document.getElementById('checkout').addEventListener('click', ()=>{
+      if(Object.keys(cart).length===0){alert('Your cart is empty. Add items to checkout.'); return}
+      alert('Proceed to checkout — this is a demo. Integrate payment gateway and backend to complete orders.');
+    });
+    document.getElementById('clearCart').addEventListener('click', ()=>{cart={};updateCartUI();});
+
+    // quick view (simple alert for demo)
+    function quickView(id){const p = productsData.find(x=>x.id===id); alert(p.title + '\n\nPrice: ' + fmt(p.price) + '\nRating: ' + p.rate + '\n\nAdd to cart for a quick checkout demo.');}
+
+    // expose some functions to global (for inline handlers)
+    window.quickView = quickView; window.changeQty = changeQty; window.removeFromCart = removeFromCart;
+
+    // tiny UI toggles
+    document.getElementById('viewGrid').addEventListener('click', ()=>{productsEl.style.gridTemplateColumns='repeat(auto-fill,minmax(220px,1fr))'});
+    document.getElementById('viewList').addEventListener('click', ()=>{productsEl.style.gridTemplateColumns='1fr'});
+
+    // initial cart render
+    updateCartUI();
+  </script>
+</body>
+</html>
